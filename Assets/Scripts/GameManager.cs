@@ -5,12 +5,19 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
+
+    //壁方向
     public const int WALL_FRONT = 1;
     public const int WALL_RIGHT = 2;
     public const int WALL_BACK = 3;
     public const int WALL_LEFT = 4;
 
+    //オブジェクト壁全体
     public GameObject panelWalls;
+
+
+    public GameObject buttonMessage; //ボタン:メッセージ
+    public GameObject buttonMessageText;//メッセージテキスト
 
     private int wallNo;
     // Use this for initialization
@@ -19,14 +26,26 @@ public class GameManager : MonoBehaviour {
 		
 	}
 	
-	// Update is called once per frame
+///	// Update is called once per frame
 	void Update () {
 	}
+    /// <summary>
+    /// Pushs the button memo.
+    /// </summary>
+    public void PushButtonMemo(){
+        DisplayMessage("エッフェル塔と書いてある");
+    }
+    /// <summary>
+    /// Pushs the button message.
+    /// </summary>
+    public void PushButtonMessage(){
+        buttonMessage.SetActive(false);
+    }
 
 
-    /*
-     * 右ボタンを押した
-     */
+    /// <summary>
+    /// Pushs the button right.
+    /// </summary>
     public void PushButtonRight(){
         wallNo++;
         if(wallNo>WALL_LEFT){
@@ -35,9 +54,9 @@ public class GameManager : MonoBehaviour {
         DisplayWall();
     }
 
-    /*
-     * 左ボタンを押した
-    */
+    /// <summary>
+    /// Pushs the button left.
+    /// </summary>
     public void PushButtonLeft(){
         wallNo--;
         if(wallNo<WALL_FRONT){
@@ -45,6 +64,17 @@ public class GameManager : MonoBehaviour {
         }
         DisplayWall();
     }
+
+
+    /// <summary>
+    /// Displaies the message.
+    /// </summary>
+    /// <param name="msg">Message.</param>
+    void DisplayMessage(string msg){
+        buttonMessage.SetActive(true);
+        buttonMessageText.GetComponent<Text>().text = msg;
+    }
+
 
     /// <summary>
     /// Displays the wall.
