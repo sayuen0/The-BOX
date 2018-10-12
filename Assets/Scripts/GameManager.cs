@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
-    //TODO p166 色と順番を確認してフランス国旗と同じだったらトンカチの絵を表示する
+
+    //TODO p175 方向切り替え時に各処理を消す
 
 
     //壁方向
@@ -20,17 +21,20 @@ public class GameManager : MonoBehaviour {
     public const int COLOR_BLUE = 2;
     public const int COLOR_WHITE = 3;
 
-    /// <summary>
-    /// オブジェクト
-    /// </summary>
+  
+
     public GameObject panelWalls;    //壁全体
 
 
     public GameObject buttonHammer; //ボタン:ハンマー
+    public GameObject buttonKey; //ボタン:鍵
+
 
     public GameObject imageHammerIcon; //アイコン:ハンマー
+    public GameObject imageKeyIcon; //アイコン:鍵
 
 
+    public GameObject buttonPig; //ボタン:ブタの貯金箱　
 
     public GameObject buttonMessage; //ボタン:メッセージ
     public GameObject buttonMessageText;//メッセージテキスト
@@ -40,13 +44,13 @@ public class GameManager : MonoBehaviour {
     public Sprite[] buttonPicture = new Sprite[4]; //ボタンの絵
 
     public Sprite hammerPicture; //トンカチの絵
+    public Sprite keyPicture; //鍵の絵
 
 
-    /// <summary>
-    /// フラグたち
-    /// </summary>
+   
     private int wallNo;//現在向いている方向
     private bool doesHaveHammer; //ハンマーを持っているか
+    private bool doesHaveKey; //鍵を持っているか
     private int[] buttonColor = new int[3];//金庫のボタン
 
 
@@ -55,6 +59,7 @@ public class GameManager : MonoBehaviour {
     void Start () {
         wallNo = WALL_FRONT; //スタート時点では「前」をむく
         doesHaveHammer = false; //ハンマーは持ってない
+        doesHaveKey = false; //鍵は持っていない
 
         buttonColor[0] = COLOR_GREEN; //ボタン1は「緑」
         buttonColor[1] = COLOR_RED;  //ボタン2は「赤」
@@ -68,13 +73,13 @@ public class GameManager : MonoBehaviour {
     void Update () {
 	}
     /// <summary>
-    /// Pushs the button memo.
+    /// when pushed the memo,  call DisplayMessage.
     /// </summary>
     public void PushButtonMemo(){
         DisplayMessage("エッフェル塔と書いてある");
     }
     /// <summary>
-    /// Pushs the button message.
+    /// when pushed the message, hide it.
     /// </summary>
     public void PushButtonMessage(){
         buttonMessage.SetActive(false);
@@ -82,7 +87,7 @@ public class GameManager : MonoBehaviour {
 
 
     /// <summary>
-    /// Pushs the button right.
+    /// when push the button right, wallNo++ and call DisplayWall.
     /// </summary>
     public void PushButtonRight(){
         wallNo++;
@@ -93,7 +98,7 @@ public class GameManager : MonoBehaviour {
     }
 
     /// <summary>
-    /// Pushs the button left.
+    /// when push the button left, wallNo-- and call DisplayWall.
     /// </summary>
     public void PushButtonLeft(){
         wallNo--;
@@ -105,7 +110,7 @@ public class GameManager : MonoBehaviour {
 
 
     /// <summary>
-    /// Displaies the message.
+    /// Displaies the text message string.
     /// </summary>
     /// <param name="msg">Message.</param>
     void DisplayMessage(string msg){
@@ -115,7 +120,7 @@ public class GameManager : MonoBehaviour {
 
 
     /// <summary>
-    /// Displays the wall.
+    /// changes the location of user view according to wallNo.
     /// </summary>
     void DisplayWall(){
         switch(wallNo){
@@ -133,22 +138,27 @@ public class GameManager : MonoBehaviour {
                 break;
         }
     }
-    /// <summary>
-    /// 以下のボタンタップメソッドは一本化しても良いように思えるが、
-    /// onclickイベントとして関連づけるために、各個のメソッドを用意した方が都合が良い
-    /// </summary>
 
+    /// <summary>
+    /// when Pushs the button lamp1, then call ChangeButtonColor 0.
+    /// </summary>
     //金庫のボタン1をタップ
     public void PushButtonLamp1()
     {
         ChangeButtonColor(0);
     }
+    /// <summary>
+    /// when Pushs the button lamp2, then call ChangeButtonColor 2.
+    /// </summary>
+
     //金庫のボタン2をタップ
     public void PushButtonLamp2()
     {
         ChangeButtonColor(1);
     }
-    //金庫のボタン2をタップ
+    /// <summary>
+    /// when Pushs the button lamp3, then call ChangeButtonColor 3.
+    /// </summary>
     public void PushButtonLamp3()
     {
         ChangeButtonColor(2);
@@ -156,6 +166,11 @@ public class GameManager : MonoBehaviour {
 
 
     //金庫のボタンの色を変更
+    /// <summary>
+    /// when button was pushed, then changes its color,
+    /// if correct color set and not having hammer , get hammer.
+    /// </summary>
+    /// <param name="buttonNo">Button no.</param>
     void ChangeButtonColor (int buttonNo){
         buttonColor[buttonNo]++;
         //「白」の時にボタンを押したら「緑」に
@@ -165,5 +180,56 @@ public class GameManager : MonoBehaviour {
 
         //ボタンの画像を変更
         buttonLamp[buttonNo].GetComponent<Image>().sprite = buttonPicture[buttonColor[buttonNo]];
+        //ボタンの色順をチェック
+        if ((buttonColor[0] == COLOR_BLUE) && (buttonColor[1]==COLOR_WHITE)&&(buttonColor[2]==COLOR_RED)){
+            //ハンマーを持っているかチェック
+            if(!doesHaveHammer){
+                DisplayMessage("金庫の中にハンマーが入っていた");
+                buttonHammer.SetActive(true);//ハンマーの絵を表示
+                imageHammerIcon.GetComponent<Image>().sprite = hammerPicture;
+
+                doesHaveHammer = true;
+            }
+        }
+
     }
+
+    /// <summary>
+    /// when pushed buttonHammer, hide it.
+    /// </summary>
+    public void PushButtonHammer(){
+        buttonHammer.SetActive(false);
+    }
+    /// <summary>
+    /// when Pushs the buttonKey, hide it.
+    /// </summary>
+    public void PushButtonKey(){
+        buttonKey.SetActive(false);
+    }
+
+
+    /// <summary>
+    /// when pushed pig,
+    /// if doesHaveHammer == false ,call DisplayMessage("cannot break")
+    /// else if doesHaveHammer == true, call DisPlayMessage("broke and got key").
+    /// </summary>
+    public void PushButtonPig(){
+        //ハンマーを持っているか
+        if(!doesHaveHammer){
+            //持ってない
+            DisplayMessage("素手では割れない");
+        }else{
+            //持ってる
+            DisplayMessage("貯金箱が割れて、中から鍵が出てきた");
+            buttonPig.SetActive(false); //貯金箱を消す
+            buttonKey.SetActive(true); //鍵の絵を表示
+            imageKeyIcon.GetComponent<Image>().sprite = keyPicture;//鍵のアイコンを表示
+
+            doesHaveKey = true;
+
+        }
+    }
+
+
+
 }
