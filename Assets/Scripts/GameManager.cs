@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 
 
-    //TODO p175 方向切り替え時に各処理を消す
 
 
     //壁方向
@@ -28,30 +28,26 @@ public class GameManager : MonoBehaviour {
 
     public GameObject buttonHammer; //ボタン:ハンマー
     public GameObject buttonKey; //ボタン:鍵
+    public GameObject buttonPig; //ボタン:ブタの貯金箱　
+    public GameObject buttonMessage; //ボタン:メッセージ
+    public GameObject buttonMessageText;//メッセージテキスト
+    public GameObject[] buttonLamp = new GameObject[3];//ボタン:金庫のボタン
 
 
     public GameObject imageHammerIcon; //アイコン:ハンマー
     public GameObject imageKeyIcon; //アイコン:鍵
 
 
-    public GameObject buttonPig; //ボタン:ブタの貯金箱　
-
-    public GameObject buttonMessage; //ボタン:メッセージ
-    public GameObject buttonMessageText;//メッセージテキスト
-
-    public GameObject[] buttonLamp = new GameObject[3];//ボタン:金庫
-
     public Sprite[] buttonPicture = new Sprite[4]; //ボタンの絵
 
     public Sprite hammerPicture; //トンカチの絵
     public Sprite keyPicture; //鍵の絵
 
-
    
     private int wallNo;//現在向いている方向
     private bool doesHaveHammer; //ハンマーを持っているか
     private bool doesHaveKey; //鍵を持っているか
-    private int[] buttonColor = new int[3];//金庫のボタン
+    private int[] buttonColor = new int[3];//金庫のボタンの色
 
 
 
@@ -87,6 +83,20 @@ public class GameManager : MonoBehaviour {
 
 
     /// <summary>
+    /// 箱をタップした
+    /// </summary>
+    public void pushButtonBox(){
+        if(!doesHaveKey){
+            //鍵を持っていない
+            DisplayMessage("鍵がかかっている");
+        }else{
+            //鍵を持っている
+            SceneManager.LoadScene("ClearScene");
+        }
+    }
+
+
+    /// <summary>
     /// when push the button right, wallNo++ and call DisplayWall.
     /// </summary>
     public void PushButtonRight(){
@@ -94,7 +104,8 @@ public class GameManager : MonoBehaviour {
         if(wallNo>WALL_LEFT){
             wallNo = WALL_FRONT;
         }
-        DisplayWall();
+        DisplayWall(); //向きを変える
+        ClearButtons();//鍵やハンマーが出ていたら消す
     }
 
     /// <summary>
@@ -105,7 +116,18 @@ public class GameManager : MonoBehaviour {
         if(wallNo<WALL_FRONT){
             wallNo = WALL_LEFT;
         }
-        DisplayWall();
+        DisplayWall();//向きを変える
+        ClearButtons(); //鍵やハンマーが出ていたら消す
+    }
+
+
+    /// <summary>
+    /// 各種表示をクリア
+    /// </summary>
+    void ClearButtons(){
+        buttonHammer.SetActive(false);
+        buttonKey.SetActive(false);
+        buttonMessage.SetActive(false);
     }
 
 
@@ -127,13 +149,13 @@ public class GameManager : MonoBehaviour {
             case WALL_FRONT://前
                 panelWalls.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
                 break;
-            case WALL_RIGHT://前
+            case WALL_RIGHT://右
                 panelWalls.transform.localPosition = new Vector3(-1000.0f, 0.0f, 0.0f);
                 break;
-            case WALL_BACK://前
+            case WALL_BACK://後ろ
                 panelWalls.transform.localPosition = new Vector3(-2000.0f, 0.0f, 0.0f);
                 break;
-            case WALL_LEFT://前
+            case WALL_LEFT://左
                 panelWalls.transform.localPosition = new Vector3(-3000.0f, 0.0f, 0.0f);
                 break;
         }
